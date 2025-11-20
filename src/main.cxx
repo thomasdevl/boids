@@ -1,6 +1,12 @@
-#include "charBoid.h"
-#include "pieBoid.h"
-#include "randomrange.h"
+//
+// Modified by Thomas Devlamminck on 20/11/2025.
+// 1) class (boid.h, charBoid.h, pieBoid,h, randomrange.h)
+// 2) heritage avec virtual  (boid.h, charBoid.h, pieBoid,h)
+// 3) exception (main.cxx, boid.h, charBoid.h, pieBoid,h, randomrange.h)
+// 4) utilisation de la librairie standard (main.cxx)
+// 5) templates (randomrange.h, boids.h, boids.cpp, charBoid.cpp, pieBoid.cppp, randomrange.h)
+//
+
 #ifdef _WIN32
 #include <SDL.h>
 
@@ -14,6 +20,9 @@
 #endif
 
 #include "boid.h"
+#include "charBoid.h"
+#include "pieBoid.h"
+#include "randomrange.h"
 
 #include <iostream>
 #include <random>
