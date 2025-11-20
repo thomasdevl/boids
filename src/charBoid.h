@@ -12,7 +12,12 @@ public:
     const char* word;
 
     CharBoid(float x, float y, float vx, float vy, Uint32 color, int filled, const char* word)
-        : Boid(x, y, vx, vy, color, filled), word(word){}
+        : Boid(x, y, vx, vy, color, filled), word(word) {
+
+        if (!word || word[0] == '\0') {
+            throw BoidException("CharBoid string cannot be empty");
+        }
+    }
 
     void printPosition() override;
     void draw(SDL_Renderer *renderer) override;

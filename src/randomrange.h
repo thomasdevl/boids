@@ -4,6 +4,7 @@
 #ifndef ANT_WAR_DIRECT_RANDOMRANGE_H
 #define ANT_WAR_DIRECT_RANDOMRANGE_H
 
+#include <iostream>
 #include <random>
 #include <type_traits>
 
@@ -27,7 +28,12 @@ public:
         : eng(rd()), min(min), max(max), dist(min, max) {}
 
     T get() {
-        return dist(eng);
+        try {
+            return dist(eng);
+        } catch (const std::exception &e) {
+            std::cerr << "RandomRange exception: " << e.what() << std::endl;
+            throw;
+        }
     }
 };
 

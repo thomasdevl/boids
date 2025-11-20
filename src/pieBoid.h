@@ -9,7 +9,11 @@ public:
     int radius;
 
     PieBoid(float x, float y, float vx, float vy, Uint32 color,int filled, int radius)
-        : Boid(x, y, vx, vy, color, filled), radius(radius){}
+        : Boid(x, y, vx, vy, color, filled), radius(radius) {
+        if (radius <= 0) {
+            throw BoidException("PieBoid radius must be positive");
+        }
+    }
 
     void printPosition() override;
     void draw(SDL_Renderer *renderer) override;

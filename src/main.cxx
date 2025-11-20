@@ -135,7 +135,7 @@ void do_update() {
 
 			// Limit acceleration
 			float len = sqrt(ax*ax + ay*ay);
-			float maxAccel = 0.15f;
+			float maxAccel = 0.05f;
 			if (len > maxAccel) {
 				ax = ax / len * maxAccel;
 				ay = ay / len * maxAccel;
@@ -147,7 +147,7 @@ void do_update() {
 
 			// Limit speed
 			float speed = sqrt(b.vx*b.vx + b.vy*b.vy);
-			float maxSpeed = 4.0f;
+			float maxSpeed = 3.0f;
 			if (speed > maxSpeed) {
 				b.vx = b.vx / speed * maxSpeed;
 				b.vy = b.vy / speed * maxSpeed;
@@ -159,6 +159,19 @@ void do_update() {
 }
 
 int main(int argc, char ** argv){
+
+	int in = 100;
+
+	if (argc >= 2) {
+		try {
+			in = std::stoi(argv[1]);
+		} catch (const std::exception& e) {
+			std::cerr << "Error in conversion: " << e.what() << std::endl;
+		}
+	}
+
+	std::cout << "Number of boids: " << in << std::endl;
+
 
 	SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "0");
 	SDL_SetHint(SDL_HINT_MOUSE_TOUCH_EVENTS, "0");
@@ -203,31 +216,35 @@ int main(int argc, char ** argv){
 		Uint32 color = (a << 24) | (r << 16) | (g << 8) | b;
 
 		int filled = rBool.get();
-
-		switch (randomInt) {
-			case 0:
-				boi = std::make_unique<PieBoid>(
-					rPos.get(), rPos.get(),
-					rSpeed.get(), rSpeed.get(),
-					color,
-					filled,
-					30);
-				break;
-			case 1:
-				boi = std::make_unique<CharBoid>(
-					rPos.get(), rPos.get(),
-					rSpeed.get(), rSpeed.get(),
-					color,
-					filled,
-					"thomas");
-				break;
-			default:
-				boi = std::make_unique<Boid>(
-					rPos.get(), rPos.get(),
-					rSpeed.get(), rSpeed.get(),
-					color,
-					filled);
-				break;
+		try {
+			switch (randomInt) {
+				case 0:
+					boi = std::make_unique<PieBoid>(
+						rPos.get(), rPos.get(),
+						rSpeed.get(), rSpeed.get(),
+						color,
+						filled,
+						30);
+					break;
+				case 1:
+					boi = std::make_unique<CharBoid>(
+						rPos.get(), rPos.get(),
+						rSpeed.get(), rSpeed.get(),
+						color,
+						filled,
+						"thomas");
+					break;
+				default:
+					boi = std::make_unique<Boid>(
+						rPos.get(), rPos.get(),
+						rSpeed.get(), rSpeed.get(),
+						color,
+						filled);
+					break;
+			}
+		} catch (BoidException &e) {
+			std::cerr << "Failed to create Boid: " << e.what() << std::endl;
+			return 1;
 		}
 	}
 

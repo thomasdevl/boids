@@ -9,7 +9,7 @@ $(EXECUTABLE): $(SRC_FILE)
 	g++ main.cxx boid.cpp pieBoid.cpp charBoid.cpp -o $(EXECUTABLE) $(SDL_FLAGS)
 
 run: $(EXECUTABLE)
-	./$(EXECUTABLE)
+	./$(EXECUTABLE) 100
 
 clean:
 	rm -f $(EXECUTABLE)

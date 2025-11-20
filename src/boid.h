@@ -7,6 +7,17 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL2_gfxPrimitives.h>
+#include <exception>
+#include <string>
+
+class BoidException : public std::exception {
+    std::string message;
+public:
+    explicit BoidException(const std::string& msg) : message(msg) {}
+    const char* what() const noexcept override {
+        return message.c_str();
+    }
+};
 
 class Boid {
 public:
@@ -21,7 +32,20 @@ public:
 
     Boid(): x(0), y(0), vx(0.0), vy(0.0), id(nextID++), color(0), filled(0){} // default constructor
     Boid(float x, float y, float vx, float vy, Uint32 color,int filled)
-        : x(x), y(y), vx(vx), vy(vy), id(nextID++), color(color), filled(filled) {}
+        : x(x), y(y), vx(vx), vy(vy), id(nextID++), color(color), filled(filled) {
+
+        if (x < 0 || y < 0) {
+            throw BoidException("Boid initial position cannot be negative");
+        }
+
+        if (filled != 0 && filled != 1) {
+            throw BoidException("Filled must be 0 or 1");
+        }
+
+        if (vx < -1000 || vy < -1000) {
+            throw std::invalid_argument("Boid initial velocity is too extreme");
+        }
+    }
 
     virtual ~Boid() = default;
 
