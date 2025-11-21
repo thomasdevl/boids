@@ -4,6 +4,7 @@
 // 3) exception (main.cxx, boid.h, charBoid.h, pieBoid,h, randomrange.h)
 // 4) utilisation de la librairie standard (main.cxx, randomrange.h, boids.h, boids.cpp, charBoid.cpp, pieBoid.cppp)
 // 5) templates (randomrange.h)
+// 6) RTTI (main.cxx)
 
 #ifdef _WIN32
 #include <SDL.h>
@@ -50,6 +51,9 @@ int mx, my;
 
 // buffer for fps count
 char fpsText[32] = "FPS: 0";
+char boidCount[32] = "Boids : 0";
+char charBoidCount[32] = "CharBoids : 0";
+char pieBoidCount[32] = "PieBoids : 0";
 
 void do_render() {
     SDL_SetRenderDrawColor(g.renderer, 255u, 255u, 255u, SDL_ALPHA_OPAQUE);
@@ -59,7 +63,11 @@ void do_render() {
         b->draw(g.renderer);
     }
 
-    stringRGBA(g.renderer, 10, 10, fpsText, 255, 0, 0, 255);
+    // statistics
+    stringRGBA(g.renderer, 10, 10, fpsText, 10, 255, 10, 255);
+    stringRGBA(g.renderer, 10, 25, boidCount, 255, 0, 255, 255);
+    stringRGBA(g.renderer, 10, 40, charBoidCount, 255, 0, 255, 255);
+    stringRGBA(g.renderer, 10, 55, pieBoidCount, 255, 0, 255, 255);
 
     SDL_RenderPresent(g.renderer);
 }
@@ -144,6 +152,15 @@ void do_update() {
                 b.vx = b.vx / speed * maxSpeed;
                 b.vy = b.vy / speed * maxSpeed;
             }
+        }
+
+        // RTTI behavior based on the class
+        if (auto *cb = dynamic_cast<CharBoid*>(b_ptr.get())) {
+            // CharBoids follow the mouse
+            float dx = mx - cb->x;
+            float dy = my - cb->y;
+            cb->vx += dx * 0.0005f;
+            cb->vy += dy * 0.0005f;
         }
 
         b.update(WIDTH, HEIGHT);
@@ -239,6 +256,22 @@ int main(int argc, char ** argv){
             return 1;
         }
     }
+
+    // RTTI used to get the statitics
+    int countBoid = 0;
+    int countCharBoid = 0;
+    int countPieBoid = 0;
+
+    for (auto &b: boidArray) {
+        if (dynamic_cast<CharBoid*>(b.get())) countCharBoid++;
+        else if (dynamic_cast<PieBoid*>(b.get())) countPieBoid++;
+        else countBoid++;
+    }
+
+    // char boidCount[32] = "Boids : 0";
+    snprintf(boidCount, sizeof(boidCount), "DefaultBoids: %d", countBoid);
+    snprintf(charBoidCount, sizeof(charBoidCount), "CharBoids: %d", countCharBoid);
+    snprintf(pieBoidCount, sizeof(pieBoidCount), "PieBoids: %d", countPieBoid);
 
     const int TARGET_FPS = 60;
     const int FRAME_DELAY = 1000 / TARGET_FPS;
